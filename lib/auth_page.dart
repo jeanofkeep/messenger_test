@@ -105,7 +105,7 @@ class _AuthPageState extends State<AuthPage> {
                   onPressed: _toggleForm,
                   child: Text(_isLogin
                       ? 'Нет аккаунта? Зарегистрироваться'
-                      : 'Уже есть аккаунт? Войти'),
+                      : 'Уже есть account? Войти'),
                 ),
               ],
             ),
