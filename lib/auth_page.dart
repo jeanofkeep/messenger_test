@@ -76,7 +76,7 @@ class _AuthPageState extends State<AuthPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  _isLogin ? 'Вход' : 'Регистрация',
+                  _isLogin ? 'Exit' : 'Регистрация',
                   style: const TextStyle(
                       fontSize: 28, fontWeight: FontWeight.bold),
                 ),
