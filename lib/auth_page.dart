@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -13,9 +15,8 @@ class AuthPage extends StatefulWidget {
 class _AuthPageState extends State<AuthPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _loginController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
   bool _isLogin = true;
   String _message = '';
 
@@ -28,20 +29,23 @@ class _AuthPageState extends State<AuthPage> {
 
   Future<void> _submit() async {
     if (_formKey.currentState!.validate()) {
-      final login = _loginController.text.trim();
+      final username = _usernameController.text.trim();
       final password = _passwordController.text.trim();
-      final name = _isLogin ? _nameController.text.trim() : '';
+      final name = _isLogin ? '' : _nameController.text.trim();
 
       try {
         final response = await (_isLogin
-            ? loginUser(login, password)
-            : registerUser(login, password, name));
+            ? loginUser(username, password)
+            : registerUser(username, password, name));
         setState(() {
           if (response.statusCode == 200) {
             _message = _isLogin ? 'Вход успешен!' : 'Регистрация успешна!';
+            final data = jsonDecode(response.body);
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const ChatListPage()),
+              MaterialPageRoute(
+                  builder: (context) => ChatListPage(
+                      name: data['name'])), // Передаем имя в ChatListPage
             );
           } else {
             _message = _isLogin
@@ -57,25 +61,25 @@ class _AuthPageState extends State<AuthPage> {
     }
   }
 
-  Future<http.Response> loginUser(String login, String password) async {
+  Future<http.Response> loginUser(String username, String password) async {
     return await http.post(
       Uri.parse('http://localhost:8000/login'), // Замени на IP для устройства
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
-        'login': login,
+        'username': username,
         'password': password,
       }),
     );
   }
 
   Future<http.Response> registerUser(
-      String login, String password, String name) async {
+      String username, String password, String name) async {
     return await http.post(
       Uri.parse(
           'http://localhost:8000/register'), // Замени на IP для устройства
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
-        'login': login,
+        'username': username,
         'password': password,
         'name': name,
       }),
@@ -85,7 +89,7 @@ class _AuthPageState extends State<AuthPage> {
   @override
   void dispose() {
     _nameController.dispose();
-    _loginController.dispose();
+    _usernameController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
@@ -131,7 +135,7 @@ class _AuthPageState extends State<AuthPage> {
                   ),
                 if (!_isLogin) const SizedBox(height: 12),
                 TextFormField(
-                  controller: _loginController,
+                  controller: _usernameController,
                   decoration: const InputDecoration(
                     labelText: 'Логин',
                     labelStyle: TextStyle(color: Colors.white70),

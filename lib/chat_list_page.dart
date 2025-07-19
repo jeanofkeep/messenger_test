@@ -1,6 +1,23 @@
 import 'package:flutter/material.dart';
 
 class ChatListPage extends StatelessWidget {
+  final String name;
+
+  const ChatListPage({Key? key, required this.name}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Чаты - $name')),
+      body: Center(child: Text('Добро пожаловать, $name!')),
+    );
+  }
+}
+
+/*
+import 'package:flutter/material.dart';
+
+class ChatListPage extends StatelessWidget {
   const ChatListPage({Key? key}) : super(key: key);
 
   @override
@@ -45,3 +62,4 @@ class ChatListPage extends StatelessWidget {
     );
   }
 }
+*/
